@@ -78,6 +78,7 @@ def make_core(
     atol: float = 1e-13,
     nsteps: int = 500,
     pole_update: str = "faithful",
+    compact_delay: bool = True,
 ) -> CochleaCore:
     """Initialised core (state after ``init_model`` and the ``solve()`` prologue)."""
     n1 = int(sections) + 1
@@ -97,6 +98,7 @@ def make_core(
         atol=float(atol),
         nsteps=int(nsteps),
         pole_update=pole_update,
+        compact_delay=compact_delay,
     )
 
 
@@ -156,6 +158,7 @@ def simulate(
     atol: float = 1e-13,
     nsteps: int = 500,
     pole_update: str = "faithful",
+    compact_delay: bool = True,
 ) -> SimulationResult:
     """Equivalent of ``m = cochlea_model(); m.init_model(stim, ...); m.solve()``.
 
@@ -189,6 +192,7 @@ def simulate(
         atol=atol,
         nsteps=nsteps,
         pole_update=pole_update,
+        compact_delay=compact_delay,
     )
     probes = _probe_channels(core, probe_freq, probe_channels)
     filtered = puria_filter(stim, samplerate)

@@ -1,0 +1,136 @@
+{
+ "machine": "macOS-26.5.1-arm64-arm-64bit",
+ "cpu": "Apple M1 Pro",
+ "python": "3.12.11",
+ "started": "2026-11-19 03:44:24",
+ "runs": [
+  {
+   "impl": "python-all",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 3.325034165987745,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 379.53125
+  },
+  {
+   "impl": "python-all",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 3.302724124980159,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 381.25
+  },
+  {
+   "impl": "python-all",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 3.355138832994271,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 379.109375
+  },
+  {
+   "impl": "python-single",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 3.35868083400419,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 316.28125
+  },
+  {
+   "impl": "python-single",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 3.452189916977659,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 316.34375
+  },
+  {
+   "impl": "python-single",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 3.3557784170261584,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 318.140625
+  },
+  {
+   "impl": "rust",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 0.7039227079949342,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 126.15625
+  },
+  {
+   "impl": "rust",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 0.7183237909921445,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 125.78125
+  },
+  {
+   "impl": "rust",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 0.7043857500248123,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 127.296875
+  },
+  {
+   "impl": "rust-accepted",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 0.5930497500230558,
+   "bitwise_equal_to_stored_original": false,
+   "peak_rss_mb": 125.625
+  },
+  {
+   "impl": "rust-accepted",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 0.5990892499976326,
+   "bitwise_equal_to_stored_original": false,
+   "peak_rss_mb": 126.234375
+  },
+  {
+   "impl": "rust-accepted",
+   "stim": "click",
+   "samples": 8200,
+   "seconds": 0.63818729200284,
+   "bitwise_equal_to_stored_original": false,
+   "peak_rss_mb": 127.390625
+  },
+  {
+   "impl": "rust",
+   "stim": "swept",
+   "samples": 208732,
+   "seconds": 39.55103174998658,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 135.546875
+  },
+  {
+   "impl": "rust-accepted",
+   "stim": "swept",
+   "samples": 208732,
+   "seconds": 26.341961665981216,
+   "bitwise_equal_to_stored_original": false,
+   "peak_rss_mb": 135.9375
+  },
+  {
+   "impl": "python-single",
+   "stim": "swept",
+   "samples": 208732,
+   "seconds": 187.10954337500152,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 324.984375
+  },
+  {
+   "impl": "python-all",
+   "stim": "swept",
+   "samples": 208732,
+   "seconds": 189.87216033399454,
+   "bitwise_equal_to_stored_original": true,
+   "peak_rss_mb": 2677.0625
+  }
+ ]
+}

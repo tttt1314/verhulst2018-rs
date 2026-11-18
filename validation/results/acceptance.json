@@ -1,0 +1,231 @@
+{
+ "click_rs_scored": {
+  "root-nh/L40": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.009638705826379358
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.009644056579776973
+   },
+   "orig_max_variation_vs_1e-2": 0.009638705826379358,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.0,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": true
+  },
+  "root-nh/L45": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.12036474210541555,
+    "1e-06": 0.07297917130461254,
+    "1e-08": 0.08077095880078523
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.12033072540675255,
+    "0.01-1e-06": 0.07275721578512828,
+    "0.01-1e-08": 0.0807707703195442,
+    "0.0001-1e-06": 0.10864457918132897,
+    "0.0001-1e-08": 0.1710706220618236,
+    "1e-06-1e-08": 0.14313803092994368
+   },
+   "orig_max_variation_vs_1e-2": 0.12036474210541555,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.24375372690356759,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0,
+    "1e-06": 0.0,
+    "1e-08": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": false
+  },
+  "root-nh/L50": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.04989053541212029
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.049396502822843705
+   },
+   "orig_max_variation_vs_1e-2": 0.04989053541212029,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.05755328611902003,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": false
+  },
+  "root-nh/L55": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.018199315406524995
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.018188162813079254
+   },
+   "orig_max_variation_vs_1e-2": 0.018199315406524995,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.03343535123003152,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": false
+  },
+  "root-nh/L60": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.012379011552889844
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.012381048417781268
+   },
+   "orig_max_variation_vs_1e-2": 0.012379011552889844,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.03540714617487936,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": false
+  },
+  "upstream-slope20/L40": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.0032968446108070687
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.0032996331628774
+   },
+   "orig_max_variation_vs_1e-2": 0.0032968446108070687,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.0,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": true
+  },
+  "upstream-slope20/L45": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.0035684702002168438,
+    "1e-06": 0.0035653611349773405
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.0035705104035424094,
+    "0.01-1e-06": 0.003567415115622672,
+    "0.0001-1e-06": 9.907845678319643e-05
+   },
+   "orig_max_variation_vs_1e-2": 0.0035684702002168438,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.0,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0,
+    "1e-06": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": true
+  },
+  "upstream-slope20/L50": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.39553462580448673,
+    "1e-06": 0.31334232644435783
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.41702339203392547,
+    "0.01-1e-06": 0.3275282849901842,
+    "0.0001-1e-06": 0.17584900950646606
+   },
+   "orig_max_variation_vs_1e-2": 0.39553462580448673,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.40608347194685546,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0,
+    "1e-06": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": false
+  },
+  "upstream-slope20/L55": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.24535764242255606,
+    "1e-06": 0.24555518933749684
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.25366162660550157,
+    "0.01-1e-06": 0.253029945404197,
+    "0.0001-1e-06": 0.014806641491215756
+   },
+   "orig_max_variation_vs_1e-2": 0.24555518933749684,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.02780363477450043,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0,
+    "1e-06": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": true
+  },
+  "upstream-slope20/L60": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.048863753263050626
+   },
+   "orig_pairwise": {
+    "0.01-0.0001": 0.048923033282145416
+   },
+   "orig_max_variation_vs_1e-2": 0.048863753263050626,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "rust_accepted_step_vs_orig_1e-2": 0.11710159474532078,
+   "rust_faithful_vs_orig_same_rtol": {
+    "0.01": 0.0,
+    "0.0001": 0.0
+   },
+   "faithful_within_orig_variation": true,
+   "accepted_step_within_orig_variation": false
+  }
+ },
+ "swept_rs_rwcr": {
+  "root-nh": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.004462575890297959,
+    "1e-06": 0.006433234634111604
+   },
+   "orig_1e-4_vs_1e-6": 0.00747745092740389,
+   "orig_max_variation_vs_1e-2": 0.006433234634111604,
+   "rust_faithful_rtol0.01_vs_orig_same_rtol": 0.0,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "faithful_within_orig_variation": true,
+   "rust_faithful_corr_vs_orig_1e-2": 1.0,
+   "rust_accepted_step_rtol0.01_vs_orig_same_rtol": 0.11663488008552046,
+   "rust_accepted_step_vs_orig_1e-2": 0.11663488008552046,
+   "accepted_step_within_orig_variation": false,
+   "rust_accepted_step_corr_vs_orig_1e-2": 0.9932395725097534,
+   "rust_faithful_rtol0.0001_vs_orig_same_rtol": 0.0
+  },
+  "upstream-slope20": {
+   "orig_rtol_vs_1e-2": {
+    "0.0001": 0.011486464184363714,
+    "1e-06": 0.012084025622455898
+   },
+   "orig_1e-4_vs_1e-6": 0.014103025323316655,
+   "orig_max_variation_vs_1e-2": 0.012084025622455898,
+   "rust_faithful_rtol0.01_vs_orig_same_rtol": 0.0,
+   "rust_faithful_vs_orig_1e-2": 0.0,
+   "faithful_within_orig_variation": true,
+   "rust_faithful_corr_vs_orig_1e-2": 0.9999999999999999,
+   "rust_accepted_step_rtol0.01_vs_orig_same_rtol": 0.0836157713859117,
+   "rust_accepted_step_vs_orig_1e-2": 0.0836157713859117,
+   "accepted_step_within_orig_variation": false,
+   "rust_accepted_step_corr_vs_orig_1e-2": 0.9964989001520269,
+   "rust_faithful_rtol0.0001_vs_orig_same_rtol": 0.0
+  }
+ }
+}
