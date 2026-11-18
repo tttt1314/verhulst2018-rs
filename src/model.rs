@@ -15,7 +15,7 @@
 // legacy MT19937 generator and are passed in by the caller.
 
 use crate::dopri5::{self, libm_pow, DopriError, OdeSystem, Options, Stats, Workspace};
-use crate::kernels::{fma as kfma, window_tap, Tridiag};
+use crate::kernels::{fma as kfma, TapCoef, Tridiag};
 use std::f64::consts::PI;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -140,6 +140,8 @@ pub struct Model {
     /// The five consecutive delay-line samples that `delay_line` can touch for each channel
     /// (upstream columns Zrp1-1 .. Zrp1+3), gathered whenever Zwp or the delays change.
     pub taps: Vec<[f32; 5]>,
+    /// Cubic coefficients of the gathered taps (see `kernels::TapCoef`).
+    pub coefs: Vec<TapCoef>,
     /// First (channel, age) for which a compact ring would be too short (never observed with
     /// physiological poles; the run then fails rather than silently differing).
     pub ring_violation: Option<(usize, usize)>,
@@ -156,8 +158,13 @@ pub struct Model {
     pole_scratch2: Vec<f64>,
     inv_rthv1: Vec<f64>,
     inv_sa: Vec<f64>,
-    inv_abs_p: Vec<f64>,
     screen_ok: bool,
+    last_call_updated: bool,
+    tap_start: Vec<usize>,
+    tap_epoch: Vec<u64>,
+    tap_mud: Vec<f64>,
+    tap_zwp: usize,
+    ring_epoch: u64,
     pub exact_pole_checks: u64,
     pub interp: [f64; 4],
     pub last_t: f64,
@@ -447,6 +454,7 @@ impl Model {
             ring_len,
             wpos: vec![0; n1],
             taps: vec![[0.0; 5]; n1],
+            coefs: vec![TapCoef::default(); n1],
             ring_violation: None,
             zwp: 0,
             dev: vec![0.0; n1],
@@ -459,8 +467,13 @@ impl Model {
             pole_scratch2: vec![0.0; n1],
             inv_rthv1: vec![0.0; n1],
             inv_sa: vec![0.0; n1],
-            inv_abs_p: vec![0.0; n1],
             screen_ok: false,
+            last_call_updated: false,
+            tap_start: vec![usize::MAX; n1],
+            tap_epoch: vec![u64::MAX; n1],
+            tap_mud: vec![f64::NAN; n1],
+            tap_zwp: usize::MAX,
+            ring_epoch: 0,
             exact_pole_checks: 0,
             interp: [0.0; 4],
             last_t: 0.0,
@@ -570,7 +583,13 @@ impl Model {
                 mud[i] = mudelay;
             }
         }
+        let same_zwp = self.tap_zwp == zwp;
+        self.tap_zwp = zwp;
         for i in 0..n1 {
+            if same_zwp && self.tap_mud[i] == self.pole_scratch2[i] && self.tap_epoch[i] == self.ring_epoch {
+                continue; // same Mudelay, same write pointer, no write since: nothing changes
+            }
+            self.tap_mud[i] = self.pole_scratch2[i];
             // `((Zwp + YbufferLgt) - Mudelay) % YbufferLgt` in float64 (np.remainder), then cast
             // to int32. Both operands are integers below 2**53, so the float subtraction is exact
             // and the Python float remainder equals the Euclidean integer remainder.
@@ -596,6 +615,11 @@ impl Model {
                     if w >= a { w - a } else { w + len - a }
                 }
             };
+            if self.tap_start[i] == start && self.tap_epoch[i] == self.ring_epoch {
+                continue; // same five samples as last time (no write since, same delay)
+            }
+            self.tap_start[i] = start;
+            self.tap_epoch[i] = self.ring_epoch;
             let ring = &self.ybuffer[self.ring_off[i]..self.ring_off[i] + len];
             let mut t = [0.0f32; 5];
             if start + 5 <= len {
@@ -611,6 +635,7 @@ impl Model {
                 }
             }
             self.taps[i] = t;
+            self.coefs[i] = TapCoef::new(&t);
         }
     }
 
@@ -624,16 +649,17 @@ impl Model {
         [z0, z1, z2, z3]
     }
 
-    /// Recompute the reciprocals used by the pole-update screen (after SheraP changed).
+    /// Invalidate the gathered taps (after the ring buffer was overwritten externally).
+    pub fn ring_epoch_bump(&mut self) {
+        self.ring_epoch += 1;
+    }
+
+    /// Validity of the pole-update screen (needs finite reciprocals and |SheraP| >= 1e-6).
     pub fn refresh_pole_screen(&mut self) {
         let n1 = self.n1;
         let mut ok = true;
-        for i in 0..n1 {
-            let inv = 1.0 / self.shera_p[i].abs();
-            self.inv_abs_p[i] = inv;
-            if i >= 1 && !(self.shera_p[i].abs() >= 1e-6 && inv.is_finite()) {
-                ok = false;
-            }
+        for i in 1..n1 {
+            ok &= self.shera_p[i].abs() >= 1e-6;
         }
         for i in 0..n1 {
             ok &= self.inv_rthv1[i].is_finite() && self.inv_sa[i].is_finite();
@@ -655,7 +681,7 @@ impl Model {
         let n1 = self.n1;
         let len = n1 - 1;
         {
-            let (rv1, nl1, isa, sb, st, ct, ps, pe, old, iold) = (
+            let (rv1, nl1, isa, sb, st, ct, ps, pe, old) = (
                 &self.inv_rthv1[1..n1],
                 &self.const_nl1[1..n1],
                 &self.inv_sa[1..n1],
@@ -665,10 +691,10 @@ impl Model {
                 &self.pole_s[1..n1],
                 &self.pole_e[1..n1],
                 &self.shera_p[1..n1],
-                &self.inv_abs_p[1..n1],
             );
             let v = &v[1..n1];
             let out = &mut self.pole_scratch2[..len];
+            let limit = 0.01 * (1.0 - 1e-7);
             for i in 0..len {
                 let vv = v[i].abs() * rv1[i];
                 let sxp = (vv - 1.0) * nl1[i];
@@ -676,11 +702,12 @@ impl Model {
                 let syp = sb[i] * (1.0 + r * r).sqrt();
                 let sy = sxp * st[i] + syp * ct[i];
                 let p = (ps[i] + sy * 0.01).min(pe[i]);
-                out[i] = (p - old[i]).abs() * iold[i];
+                // |p - old| - limit*|old| < 0  <=>  relative change below the limit
+                out[i] = (p - old[i]).abs() - limit * old[i].abs();
             }
         }
         let r = &self.pole_scratch2[..len];
-        let mut acc = [0.0f64; 4];
+        let mut acc = [f64::NEG_INFINITY; 4];
         let chunks = len / 4;
         for c in 0..chunks {
             for l in 0..4 {
@@ -692,17 +719,25 @@ impl Model {
         for &x in &r[4 * chunks..] {
             acc[0] = if x <= acc[0] { acc[0] } else { x };
         }
-        let limit = 0.01 * (1.0 - 1e-7);
-        acc.iter().all(|&a| a < limit)
+        acc.iter().all(|&a| a < 0.0)
     }
 
     /// Candidate poles from velocities and the upstream 1 % rule. Returns true if the poles were
     /// updated (SheraParameters and ZweigImpedance re-run).
     #[inline(always)]
     pub fn maybe_update_poles(&mut self, v: &[f64]) -> bool {
-        if self.screen_says_no_update(v) {
+        // Updates come in runs (55 % of calls during a loud sweep); after an update the
+        // screen is skipped because it would most likely be followed by the exact test anyway.
+        if !self.last_call_updated && self.screen_says_no_update(v) {
             return false;
         }
+        let updated = self.exact_pole_update(v);
+        self.last_call_updated = updated;
+        updated
+    }
+
+    /// Upstream's test, evaluated exactly, and the update itself.
+    fn exact_pole_update(&mut self, v: &[f64]) -> bool {
         self.exact_pole_checks += 1;
         let n1 = self.n1;
         {
@@ -791,7 +826,7 @@ impl Model {
         // channel 0: delay tap (only feeds YZweig[0], which upstream computes but never uses)
         {
             let d = self.dev[0] + frac;
-            self.yzweig[0] = window_tap(&self.taps[0], d);
+            self.yzweig[0] = self.coefs[0].tap(d);
             if faithful_dev {
                 self.dev[0] = d - frac;
             }
@@ -804,7 +839,7 @@ impl Model {
         let mut prev = drive / td.b0;
         self.qsol[0] = prev;
         {
-            let taps = &self.taps[..n1];
+            let coefs = &self.coefs[..n1];
             let dev = &mut self.dev[..n1];
             let yz = &mut self.yzweig[..n1];
             let (shf, shd, om2, rho, zasq) = (
@@ -820,7 +855,7 @@ impl Model {
             let q = &mut self.qsol[..n1];
             for i in 1..n1 {
                 let d = dev[i] + frac;
-                let yzi = window_tap(&taps[i], d);
+                let yzi = coefs[i].tap(d);
                 yz[i] = yzi;
                 if faithful_dev {
                     dev[i] = d - frac;
@@ -855,6 +890,7 @@ impl Model {
         y[0] = self.last_rhs_v0; // self.V1[0] = self.Vtmp[0] writes through the view of r.y
         let lgt = self.ybuffer_lgt;
         self.zwp = (self.zwp + 1) % lgt;
+        self.ring_epoch += 1;
         for i in 0..n1 {
             let len = self.ring_len[i];
             let w = if self.wpos[i] + 1 == len { 0 } else { self.wpos[i] + 1 };

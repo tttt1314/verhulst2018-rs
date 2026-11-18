@@ -68,6 +68,47 @@ pub fn window_tap(w: &[f32; 5], dev: f64) -> f64 {
     cubic_interpolate(a, b, c, d, mu)
 }
 
+/// Coefficients of `cubic_interpolate` for the two possible tap windows of one channel
+/// (`[0]`: taps `w[0..4]`, `[1]`: shifted taps `w[1..5]`), where `w` holds the five
+/// consecutive delay-line samples Zrp1-1 .. Zrp1+3. They depend only on the buffer contents,
+/// which change once per output sample, so `cubic_interpolate` can be evaluated from them
+/// with exactly the same operations (and bits) in every right-hand-side call.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct TapCoef {
+    pub a0: [f64; 2],
+    pub a1: [f64; 2],
+    pub a2: [f64; 2],
+    pub y1: [f64; 2],
+}
+
+impl TapCoef {
+    pub fn new(w: &[f32; 5]) -> Self {
+        let mut c = TapCoef::default();
+        for s in 0..2 {
+            let (y0, y1, y2, y3) = (w[s], w[s + 1], w[s + 2], w[s + 3]);
+            let a0 = ((y1 - (y0 + y2)) + y3) as f64;
+            c.a0[s] = a0;
+            c.a1[s] = ((y0 - y1) as f64) - a0;
+            c.a2[s] = (y2 - y0) as f64;
+            c.y1[s] = y1 as f64;
+        }
+        c
+    }
+
+    /// `delay_line` for this channel: identical to `delay_tap` on the full buffer.
+    #[inline(always)]
+    pub fn tap(&self, dev: f64) -> f64 {
+        let shift = !(dev < 1.0); // upstream `if (dev < 1) ... else` (NaN takes the else branch)
+        let mu = if shift { dev + -1.0 } else { dev } as f32;
+        let mu2 = (mu * mu) as f64;
+        let mud = mu as f64;
+        let s = shift as usize;
+        let t1 = fma(self.a0[s], mud, self.a1[s]);
+        let t2 = fma(self.a2[s], mud, self.y1[s]);
+        fma(t1, mu2, t2)
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn delay_line(
     ybuf: &[f32],
@@ -180,6 +221,17 @@ mod tests {
                 s += c[i] * x1[i + 1];
             }
             assert!((s - r[i]).abs() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn tap_coefficients_match_cubic() {
+        let w = [0.3f32, -1.25, 2.5e-3, 7.0, -0.125];
+        let c = TapCoef::new(&w);
+        for &d in &[0.0, 0.1, 0.5, 0.999_999, 1.0, 1.3, 1.999, f64::NAN] {
+            let want = window_tap(&w, d);
+            let got = c.tap(d);
+            assert!(want.to_bits() == got.to_bits() || (want.is_nan() && got.is_nan()), "d={d}");
         }
     }
 

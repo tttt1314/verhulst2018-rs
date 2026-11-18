@@ -175,6 +175,7 @@ mod python {
                     m.ybuffer[m.ring_off[i] + s] = a[[i, col]] as f32;
                 }
             }
+            m.ring_epoch_bump();
             m.zweig_impedance();
             Ok(())
         }
