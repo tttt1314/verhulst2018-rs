@@ -1,0 +1,13 @@
+© copyright 2017 Ghent University – Universiteit Gent, all rights reserved; this Derivative work is made available for non-commercial academic research purposes and subject to an UGent Academic License (see LICENSE in this repository; the same license text ships with the original model at https://github.com/HearingTechnology/Verhulstetal2018Model).
+
+This repository is a Derivative Work of the cochlear core of the Verhulst et al. (2018) transmission-line
+model (files cochlear_model2018.py and cochlea_utils.c of Verhulstetal2018Model, v1.2, upstream commit
+ed8d576460b4eabb9bcb740f93b00b906014d12b). The files were changed: the cochlear core was rewritten in
+Rust (with a Python binding), the scipy dopri5 integrator it calls was re-implemented in Rust, the
+integration tolerances were made configurable, the stored outputs were restricted to the otoacoustic
+emission and optional probe channels, and an optional (non-default) "accepted-step" pole-update
+variant was added. Every source file derived from the original carries this notice.
+
+The dopri5 integrator re-implementation follows the algorithm of E. Hairer and G. Wanner (DOPRI5) as
+translated to C in SciPy 1.18.1 (scipy/integrate/src/dop.c, BSD-3-Clause, Copyright (C) 2025 SciPy
+developers). No SciPy source is copied verbatim.

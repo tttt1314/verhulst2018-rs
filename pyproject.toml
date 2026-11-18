@@ -1,0 +1,26 @@
+# © copyright 2017 Ghent University – Universiteit Gent, all rights reserved; this Derivative work is
+# made available for non-commercial academic research purposes and subject to an UGent Academic
+# License (see LICENSE and NOTICE).
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "verhulst2018-rs"
+version = "0.1.0"
+description = "Rust port of the Verhulst et al. (2018) transmission-line cochlear core (non-commercial academic research only, UGent Academic License)"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+verhulst2018-rs-worker = "verhulst2018_rs.worker:main"
+
+[tool.maturin]
+python-source = "python"
+module-name = "verhulst2018_rs._core"
+features = ["python"]
+profile = "release"

@@ -1,0 +1,7 @@
+/target/
+.venv/
+__pycache__/
+*.so
+*.pyc
+/validation/scratch/
+.pytest_cache/
